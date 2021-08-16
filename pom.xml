@@ -9,6 +9,32 @@
     <version>0.0.1</version>
     <packaging>jar</packaging>
 
+    <name>Seceh basic utils for Java</name>
+    <url>https://github.com/orzroa/basic-utils</url>
+    <description>This is a basic utils for Java.</description>
+
+    <licenses>
+        <license>
+            <name>GPL-v3.0</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <tag>main</tag>
+        <url>git@github.com:orzroa/basic-utils.git</url>
+        <connection>scm:git:git@github.com:orzroa/basic-utils.git</connection>
+        <developerConnection>scm:git:git@github.com:orzroa/basic-utils.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Leo</name>
+            <email>orzroa@gmail.com</email>
+            <organization>Seceh</organization>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
