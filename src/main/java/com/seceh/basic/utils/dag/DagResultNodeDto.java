@@ -15,7 +15,7 @@ public class DagResultNodeDto implements Serializable {
 
     private static final long serialVersionUID = 2975795282283596488L;
 
-    protected String uuid;
+    protected String id;
 
     protected String name;
 
@@ -23,19 +23,19 @@ public class DagResultNodeDto implements Serializable {
 
     protected transient int streamUsage = 0;
 
-    public DagResultNodeDto(String uuid, String name) {
-        this.uuid = uuid;
+    public DagResultNodeDto(String id, String name) {
+        this.id = id;
         this.name = name;
         this.streamSet.put(UP, Sets.newHashSet());
         this.streamSet.put(DOWN, Sets.newHashSet());
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getId() {
+        return id;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

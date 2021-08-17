@@ -6,9 +6,9 @@ public class DagResultLinkDto implements Serializable {
 
     private static final long serialVersionUID = -6939613985367364636L;
 
-    private String from;
+    private String source;
 
-    private String to;
+    private String target;
 
     private String linkName;
 
@@ -17,27 +17,27 @@ public class DagResultLinkDto implements Serializable {
     public DagResultLinkDto() {
     }
 
-    public DagResultLinkDto(String from, String to, String linkName, String linkStatus) {
-        this.from = from;
-        this.to = to;
+    public DagResultLinkDto(String source, String target, String linkName, String linkStatus) {
+        this.source = source;
+        this.target = target;
         this.linkName = linkName;
         this.linkStatus = linkStatus;
     }
 
-    public String getFrom() {
-        return from;
+    public String getSource() {
+        return source;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setSource(String source) {
+        this.source = source;
     }
 
-    public String getTo() {
-        return to;
+    public String getTarget() {
+        return target;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public String getLinkName() {

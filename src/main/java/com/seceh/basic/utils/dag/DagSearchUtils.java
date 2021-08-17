@@ -23,19 +23,19 @@ public class DagSearchUtils {
 
         //初始化，只扫描入口数量为0的节点
         List<String> idList = fullMap.values().stream().filter(p -> p.getStream(dir.reverse()).isEmpty())
-                .map(DagResultNodeDto::getUuid).collect(Collectors.toList());
+                .map(DagResultNodeDto::getId).collect(Collectors.toList());
         int pos = 0;
         DagResultDto dagResultDto = new DagResultDto();
         while (pos < idList.size()) {
-            String curUuid = idList.get(pos);
-            dagResultDto.getNodes().add(fullMap.get(curUuid));
-            Set<DagResultLinkDto> linkSet = fullMap.get(curUuid).getStream(dir);
+            String curId = idList.get(pos);
+            dagResultDto.getNodes().add(fullMap.get(curId));
+            Set<DagResultLinkDto> linkSet = fullMap.get(curId).getStream(dir);
             dagResultDto.getLinks().addAll(linkSet);
             for (DagResultLinkDto link : linkSet) {
-                String newUuid = getNewUuid(dir, link);
+                String newId = getNextId(dir, link);
                 //新出现的入口数量为0的节点，放到待处理队列中
-                if (fullMap.get(newUuid).exhausted(dir)) {
-                    idList.add(newUuid);
+                if (fullMap.get(newId).exhausted(dir)) {
+                    idList.add(newId);
                 }
             }
             pos++;
@@ -63,12 +63,12 @@ public class DagSearchUtils {
         List<String> idList = Lists.newArrayList(entryId);
         Set<String> idSet = Sets.newHashSet(entryId);
         while (pos < idList.size()) {
-            String curUuid = idList.get(pos);
-            Set<DagResultLinkDto> linkSet = nodeMap.get(curUuid).getStream(dir);
+            String curId = idList.get(pos);
+            Set<DagResultLinkDto> linkSet = nodeMap.get(curId).getStream(dir);
             for (DagResultLinkDto link : linkSet) {
-                String newUuid = getNewUuid(dir, link);
-                if (idSet.add(newUuid)) {
-                    idList.add(newUuid);
+                String newId = getNextId(dir, link);
+                if (idSet.add(newId)) {
+                    idList.add(newId);
                 }
             }
             pos++;
@@ -81,7 +81,7 @@ public class DagSearchUtils {
                 iter.remove();
             }
             for (DagDirectionEnum eachDir : DagDirectionEnum.values()) {
-                entry.getValue().getStream(eachDir).removeIf(link -> !idSet.contains(link.getFrom()) || !idSet.contains(link.getTo()));
+                entry.getValue().getStream(eachDir).removeIf(link -> !idSet.contains(link.getSource()) || !idSet.contains(link.getTarget()));
             }
         }
     }
@@ -91,15 +91,15 @@ public class DagSearchUtils {
      *
      * @param dir              检索方向
      * @param dagResultLinkDto 连接
-     * @return 另一端的节点uuid
+     * @return 另一端的节点id
      */
-    private static String getNewUuid(DagDirectionEnum dir, DagResultLinkDto dagResultLinkDto) {
-        String newUuid;
+    private static String getNextId(DagDirectionEnum dir, DagResultLinkDto dagResultLinkDto) {
+        String nextId;
         if (dir == UP) {
-            newUuid = dagResultLinkDto.getFrom();
+            nextId = dagResultLinkDto.getSource();
         } else {
-            newUuid = dagResultLinkDto.getTo();
+            nextId = dagResultLinkDto.getTarget();
         }
-        return newUuid;
+        return nextId;
     }
 }

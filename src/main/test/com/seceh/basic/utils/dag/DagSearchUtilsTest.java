@@ -25,7 +25,7 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("13#c,12#b,11#a",
                 String.join(",", DagSearchUtils.search(nodeMap, "13#c", UP).getNodes().stream()
-                        .map(DagResultNodeDto::getUuid).collect(Collectors.toSet())));
+                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
     }
 
     @Test
@@ -39,7 +39,7 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("15#e,14#d,13#c,12#b,16#f",
                 String.join(",", DagSearchUtils.search(nodeMap, "12#b", DOWN).getNodes().stream()
-                        .map(DagResultNodeDto::getUuid).collect(Collectors.toSet())));
+                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
     }
 
     @Test
@@ -53,7 +53,7 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("15#e,14#d,13#c,12#b,16#f",
                 String.join(",", DagSearchUtils.search(nodeMap, "12#b", DOWN).getNodes().stream()
-                        .map(DagResultNodeDto::getUuid).collect(Collectors.toSet())));
+                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
     }
 
     @Test
