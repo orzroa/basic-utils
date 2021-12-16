@@ -16,7 +16,7 @@ class DagSearchUtilsTest {
 
     @Test
     void testUp() {
-        Map<String, DagResultNodeDto> nodeMap = Maps.newHashMap();
+        Map<String, DagNode> nodeMap = Maps.newHashMap();
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "13#c");
         add(nodeMap, "13#c", "14#d");
@@ -25,12 +25,12 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("13#c,12#b,11#a",
                 String.join(",", DagSearchUtils.search(nodeMap, "13#c", UP).getNodes().stream()
-                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
+                        .map(DagNode::getId).collect(Collectors.toSet())));
     }
 
     @Test
     void testDown() {
-        Map<String, DagResultNodeDto> nodeMap = Maps.newHashMap();
+        Map<String, DagNode> nodeMap = Maps.newHashMap();
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "13#c");
         add(nodeMap, "13#c", "14#d");
@@ -39,12 +39,12 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("15#e,14#d,13#c,12#b,16#f",
                 String.join(",", DagSearchUtils.search(nodeMap, "12#b", DOWN).getNodes().stream()
-                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
+                        .map(DagNode::getId).collect(Collectors.toSet())));
     }
 
     @Test
     void testFork() {
-        Map<String, DagResultNodeDto> nodeMap = Maps.newHashMap();
+        Map<String, DagNode> nodeMap = Maps.newHashMap();
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "13#c");
         add(nodeMap, "13#c", "14#d");
@@ -53,12 +53,12 @@ class DagSearchUtilsTest {
 
         Assertions.assertEquals("15#e,14#d,13#c,12#b,16#f",
                 String.join(",", DagSearchUtils.search(nodeMap, "12#b", DOWN).getNodes().stream()
-                        .map(DagResultNodeDto::getId).collect(Collectors.toSet())));
+                        .map(DagNode::getId).collect(Collectors.toSet())));
     }
 
     @Test
     void testSelfLoop() {
-        Map<String, DagResultNodeDto> nodeMap = Maps.newHashMap();
+        Map<String, DagNode> nodeMap = Maps.newHashMap();
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "11#a");
 
@@ -69,7 +69,7 @@ class DagSearchUtilsTest {
 
     @Test
     void testDownStreamLoop() {
-        Map<String, DagResultNodeDto> nodeMap = Maps.newHashMap();
+        Map<String, DagNode> nodeMap = Maps.newHashMap();
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "13#c");
         add(nodeMap, "13#c", "14#d");
@@ -81,20 +81,20 @@ class DagSearchUtilsTest {
                 "以下数据节点处于回环中：15#e,14#d");
     }
 
-    private void add(Map<String, DagResultNodeDto> nodeMap, String from, String to) {
-        DagResultNodeDto fromNode = nodeMap.get(from);
+    private void add(Map<String, DagNode> nodeMap, String from, String to) {
+        DagNode fromNode = nodeMap.get(from);
         if (fromNode == null) {
-            fromNode = new DagResultNodeDto(from, from);
+            fromNode = new DagNode(from);
             nodeMap.put(from, fromNode);
         }
 
-        DagResultNodeDto toNode = nodeMap.get(to);
+        DagNode toNode = nodeMap.get(to);
         if (toNode == null) {
-            toNode = new DagResultNodeDto(to, to);
+            toNode = new DagNode(to);
             nodeMap.put(to, toNode);
         }
 
-        DagResultLinkDto link = new DagResultLinkDto(from, to, from + " to " + to, null);
+        DagLink link = new DagLink(from, to);
 
         fromNode.addStream(DOWN, link);
         toNode.addStream(UP, link);

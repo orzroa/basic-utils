@@ -18,20 +18,20 @@ public class DagSearchUtils {
     private DagSearchUtils() {
     }
 
-    public static DagResultDto search(Map<String, ? extends DagResultNodeDto> fullMap, String entryId, DagDirectionEnum dir) {
+    public static DagSearchResult search(Map<String, ? extends DagNode> fullMap, String entryId, DagDirectionEnum dir) {
         scanAndCrop(fullMap, entryId, dir);
 
         //初始化，只扫描入口数量为0的节点
         List<String> idList = fullMap.values().stream().filter(p -> p.getStream(dir.reverse()).isEmpty())
-                .map(DagResultNodeDto::getId).collect(Collectors.toList());
+                .map(DagNode::getId).collect(Collectors.toList());
         int pos = 0;
-        DagResultDto dagResultDto = new DagResultDto();
+        DagSearchResult dagSearchResult = new DagSearchResult();
         while (pos < idList.size()) {
             String curId = idList.get(pos);
-            dagResultDto.getNodes().add(fullMap.get(curId));
-            Set<DagResultLinkDto> linkSet = fullMap.get(curId).getStream(dir);
-            dagResultDto.getLinks().addAll(linkSet);
-            for (DagResultLinkDto link : linkSet) {
+            dagSearchResult.getNodes().add(fullMap.get(curId));
+            Set<DagLink> linkSet = fullMap.get(curId).getStream(dir);
+            dagSearchResult.getLinks().addAll(linkSet);
+            for (DagLink link : linkSet) {
                 String newId = getNextId(dir, link);
                 //新出现的入口数量为0的节点，放到待处理队列中
                 if (fullMap.get(newId).exhausted(dir)) {
@@ -48,7 +48,7 @@ public class DagSearchUtils {
             throw new NamedException(DAG_LOOP, String.join(",", idSet));
         }
 
-        return dagResultDto;
+        return dagSearchResult;
     }
 
     /**
@@ -58,14 +58,14 @@ public class DagSearchUtils {
      * @param entryId 入口点
      * @param dir     检索方向
      */
-    private static void scanAndCrop(Map<String, ? extends DagResultNodeDto> nodeMap, String entryId, DagDirectionEnum dir) {
+    private static void scanAndCrop(Map<String, ? extends DagNode> nodeMap, String entryId, DagDirectionEnum dir) {
         int pos = 0;
         List<String> idList = Lists.newArrayList(entryId);
         Set<String> idSet = Sets.newHashSet(entryId);
         while (pos < idList.size()) {
             String curId = idList.get(pos);
-            Set<DagResultLinkDto> linkSet = nodeMap.get(curId).getStream(dir);
-            for (DagResultLinkDto link : linkSet) {
+            Set<DagLink> linkSet = nodeMap.get(curId).getStream(dir);
+            for (DagLink link : linkSet) {
                 String newId = getNextId(dir, link);
                 if (idSet.add(newId)) {
                     idList.add(newId);
@@ -74,9 +74,9 @@ public class DagSearchUtils {
             pos++;
         }
 
-        Iterator<? extends Map.Entry<String, ? extends DagResultNodeDto>> iter = nodeMap.entrySet().iterator();
+        Iterator<? extends Map.Entry<String, ? extends DagNode>> iter = nodeMap.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, ? extends DagResultNodeDto> entry = iter.next();
+            Map.Entry<String, ? extends DagNode> entry = iter.next();
             if (!idSet.contains(entry.getKey())) {
                 iter.remove();
             }
@@ -90,15 +90,15 @@ public class DagSearchUtils {
      * 根据方向，获取下一个节点
      *
      * @param dir              检索方向
-     * @param dagResultLinkDto 连接
+     * @param dagLink 连接
      * @return 另一端的节点id
      */
-    private static String getNextId(DagDirectionEnum dir, DagResultLinkDto dagResultLinkDto) {
+    private static String getNextId(DagDirectionEnum dir, DagLink dagLink) {
         String nextId;
         if (dir == UP) {
-            nextId = dagResultLinkDto.getSource();
+            nextId = dagLink.getSource();
         } else {
-            nextId = dagResultLinkDto.getTarget();
+            nextId = dagLink.getTarget();
         }
         return nextId;
     }
