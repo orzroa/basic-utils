@@ -49,7 +49,8 @@ class JsonUtilsTest {
 
     @Test
     void testObject2Lines() {
-        Assertions.assertEquals(lines, JsonUtils.object2Lines(vo));
+        Assertions.assertEquals(lines,
+                JsonUtils.object2Lines(vo).replace("\r", ""));
     }
 
     @Test
