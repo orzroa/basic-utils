@@ -23,6 +23,9 @@ public class JsonUtils {
 
     /**
      * 类或者集合转成json字符串
+     * @param object 需要转的对象
+     * @param <T> 对象类型
+     * @return 单行json字符串
      */
     public static <T> String object2Line(T object) {
 
@@ -36,6 +39,9 @@ public class JsonUtils {
 
     /**
      * 类或者集合转成json字符串
+     * @param object 需要转的对象
+     * @param <T> 对象类型
+     * @return 多行json字符串
      */
     public static <T> String object2Lines(T object) {
 
@@ -49,6 +55,10 @@ public class JsonUtils {
 
     /**
      * json字符串转成普通对象
+     * @param json 需要转的json字符串
+     * @param object 转换目标
+     * @param <T> 目标类型
+     * @return 目标对象
      */
     public static <T> T string2Object(String json, Class<T> object) {
 
@@ -63,7 +73,11 @@ public class JsonUtils {
 
     /**
      * json字符串转成泛型相关对象
-     * 使用示例：string2Type(param, new TypeReference<List<User>>() {})
+     * 使用示例：{@code string2Type(param, new TypeReference<List<User>>() {})}
+     * @param json 需要转的json字符串
+     * @param typeReference 转换目标
+     * @param <T> 目标类型
+     * @return 目标对象
      */
     public static <T> T string2Type(String json, TypeReference<T> typeReference) {
 
