@@ -18,7 +18,7 @@ public class DagNode implements Serializable {
 
     protected String id;
 
-    protected Map<String, Serializable> properties = new HashMap<>();
+    protected HashMap<String, Serializable> properties = new HashMap<>();
 
     protected transient Map<DagDirectionEnum, Set<DagLink>> streamSet = Maps.newHashMap();
 
@@ -43,7 +43,7 @@ public class DagNode implements Serializable {
     }
 
     public void setProperties(Map<String, Serializable> properties) {
-        this.properties = properties;
+        this.properties = (HashMap<String, Serializable>) properties;
     }
 
     public void addStream(DagDirectionEnum dagDirectionEnum, DagLink dagLink) {
