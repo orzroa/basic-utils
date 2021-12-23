@@ -2,7 +2,7 @@ package com.seceh.basic.utils.dag;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.seceh.basic.utils.exception.NamedException;
+import com.seceh.basic.utils.dag.exception.DagServiceException;
 
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.seceh.basic.utils.dag.DagDirectionEnum.UP;
-import static com.seceh.basic.utils.exception.ErrorCodeEnum.DAG_LOOP;
+import static com.seceh.basic.utils.dag.exception.DagErrorCodeEnum.DAG_LOOP;
 
 public class DagSearchUtils {
 
@@ -45,7 +45,7 @@ public class DagSearchUtils {
         if (idList.size() < fullMap.size()) {
             Set<String> idSet = fullMap.keySet();
             idList.forEach(idSet::remove);
-            throw new NamedException(DAG_LOOP, String.join(",", idSet));
+            throw new DagServiceException(DAG_LOOP, String.join(",", idSet));
         }
 
         return dagSearchResult;

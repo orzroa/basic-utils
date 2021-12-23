@@ -1,7 +1,7 @@
 package com.seceh.basic.utils.dag;
 
 import com.google.common.collect.Maps;
-import com.seceh.basic.utils.exception.NamedException;
+import com.seceh.basic.utils.exception.ServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +62,7 @@ class DagSearchUtilsTest {
         add(nodeMap, "11#a", "12#b");
         add(nodeMap, "12#b", "11#a");
 
-        Assertions.assertThrows(NamedException.class,
+        Assertions.assertThrows(ServiceException.class,
                 () -> DagSearchUtils.search(nodeMap, "11#a", DOWN),
                 "以下数据节点处于回环中：12#b,11#a");
     }
@@ -76,7 +76,7 @@ class DagSearchUtilsTest {
         add(nodeMap, "14#d", "15#e");
         add(nodeMap, "15#e", "14#d");
 
-        Assertions.assertThrows(NamedException.class,
+        Assertions.assertThrows(ServiceException.class,
                 () -> DagSearchUtils.search(nodeMap, "11#a", DOWN),
                 "以下数据节点处于回环中：15#e,14#d");
     }
