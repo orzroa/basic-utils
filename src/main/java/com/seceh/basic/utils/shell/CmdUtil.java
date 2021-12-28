@@ -42,6 +42,8 @@ public class CmdUtil {
         String[] cmds;
         String[] envs;
 
+        if (showDetail) logger.info("running {}", cmd);
+
         if (OsUtil.isWindows()) {
             cmds = new String[]{"cmd", "/c", cmd};
             envs = new String[]{"PATH=C:\\windows\\system32;C:\\windows"};
