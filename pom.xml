@@ -6,7 +6,7 @@
 
     <groupId>com.seceh</groupId>
     <artifactId>basic-utils</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.5</version>
     <packaging>jar</packaging>
 
     <name>Seceh basic utils for Java</name>
