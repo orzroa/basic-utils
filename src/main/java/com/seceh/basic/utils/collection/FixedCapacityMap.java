@@ -1,4 +1,4 @@
-package com.seceh.basic.utils.dag.collection;
+package com.seceh.basic.utils.collection;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class FixedCapacityMap<K, V> {
 
-    private Map<K, V> fixedCapacityCache;
+    private final Map<K, V> fixedCapacityCache;
 
     public FixedCapacityMap(int capacity) {
         fixedCapacityCache = Collections.synchronizedMap(new LRUHashMap<>(capacity));
@@ -26,7 +26,7 @@ public class FixedCapacityMap<K, V> {
 
     static class LRUHashMap<K, V> extends LinkedHashMap<K, V> {
 
-        private int capacity;
+        private final int capacity;
 
         public LRUHashMap(int capacity) {
             this.capacity = capacity;
