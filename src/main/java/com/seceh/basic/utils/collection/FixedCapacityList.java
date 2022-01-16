@@ -26,6 +26,14 @@ public class FixedCapacityList<E> {
         }
     }
 
+    public E last() {
+        if(fixedCapacityCache.isEmpty()){
+            return null;
+        } else {
+            return fixedCapacityCache.get(fixedCapacityCache.size() - 1);
+        }
+    }
+
     public int size() {
         return fixedCapacityCache.size();
     }
