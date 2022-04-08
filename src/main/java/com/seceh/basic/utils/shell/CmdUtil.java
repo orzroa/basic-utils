@@ -1,7 +1,6 @@
 package com.seceh.basic.utils.shell;
 
 import com.google.common.collect.Lists;
-import com.seceh.basic.utils.json.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,29 +15,39 @@ public class CmdUtil {
     private static final Logger logger = LoggerFactory.getLogger(CmdUtil.class.getName());
     private static final String DEFAULT_CHARSET = System.getProperty("sun.jnu.encoding");
 
-    private static String readFromStream(InputStream in) {
-        String line;
-        List<String> lines = Lists.newArrayList();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET))) {
-            while ((line = br.readLine()) != null) {
-                if (lines.size() > 100) {
-                    lines.add("[TOO_MANY_LINES]");
-                }
-                if (line.length() > 10000) {
-                    lines.add("[TOO_LONG_LINE]");
-                } else {
-                    lines.add(line);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("cannot readFromStream", e);
+
+    private static class CmdOutputReader implements Runnable {
+
+        private InputStream in;
+        private StringBuilder output;
+
+        public CmdOutputReader(InputStream in, StringBuilder output) {
+            this.in = in;
+            this.output = output;
         }
 
-        return String.join("\n", lines);
+        @Override
+        public void run() {
+            String line;
+            List<String> lines = Lists.newArrayList();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(in, DEFAULT_CHARSET))) {
+                while ((line = br.readLine()) != null) {
+                    if (lines.size() > 1000) {
+                        output.append("[TOO_MANY_LINES]").append("\n");
+                    }
+                    if (line.length() > 1000000) {
+                        output.append("[TOO_LONG_LINE]").append("\n");
+                    } else {
+                        output.append(line).append("\n");
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("cannot readFromStream", e);
+            }
+        }
     }
 
     public static CmdRunResult run(String cmd, boolean showDetail) {
-        InputStream in;
         String[] cmds;
         String[] envs;
 
@@ -53,25 +62,23 @@ public class CmdUtil {
                     "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"};
         }
 
-        String stdout;
-        String error;
-        CmdRunResult result = new CmdRunResult();
+        StringBuilder stdout = new StringBuilder();
+        StringBuilder error = new StringBuilder();
+        CmdRunResult result = new CmdRunResult(cmd);
 
         try {
             Process p = Runtime.getRuntime().exec(cmds, envs, null);
-            int exitCode = p.waitFor();
-            result.setExitCode(exitCode);
+            new Thread(new CmdOutputReader(p.getInputStream(), stdout)).start();
+            new Thread(new CmdOutputReader(p.getErrorStream(), error)).start();
 
-            in = p.getInputStream();
-            stdout = readFromStream(in);
-            result.setStdout(stdout);
-
-            in = p.getErrorStream();
-            error = readFromStream(in);
-            result.setError(error);
+            result.setExitCode(p.waitFor());
+            result.setStdout(stdout.toString());
+            result.setError(error.toString());
 
             if (showDetail && logger.isInfoEnabled()) {
-                logger.info(JsonUtils.object2Line(result));
+                logger.info("exit code: {}", result.getExitCode());
+                logger.info("stdout:\n{}", result.getStdout());
+                logger.info("stderr:\n{}", result.getError());
             }
 
             return result;
@@ -87,13 +94,33 @@ public class CmdUtil {
     }
 
     public static void main(String[] args) {
-        CmdUtil.run("ping localhost", true);
+        CmdUtil.run("ping localhost -c 4", true);
     }
 
     public static class CmdRunResult {
+
+        private String cmd;
+
         private int exitCode;
+
         private String stdout;
+
         private String error;
+
+        public CmdRunResult() {
+        }
+
+        public CmdRunResult(String cmd) {
+            this.cmd = cmd;
+        }
+
+        public String getCmd() {
+            return cmd;
+        }
+
+        public void setCmd(String cmd) {
+            this.cmd = cmd;
+        }
 
         public int getExitCode() {
             return exitCode;
